@@ -161,6 +161,14 @@ class DataAccessController < ApplicationController
     end
   end
 
+  def cancel
+    retrieval = Retrieval.find(params[:retrieval_id])
+
+    DelayedJob.where("handler LIKE '%:process\nargs:\n- #{retrieval.id}\n%'").destroy_all
+
+    redirect_to data_status_path
+  end
+
   def remove
     if params[:order_id]
       order_response = echo_client.delete_order(params[:order_id], token)

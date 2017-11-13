@@ -59,6 +59,7 @@ EarthdataSearchClient::Application.routes.draw do
   get 'data/retrieve/:id' => 'data_access#retrieval'
   get 'data/status' => 'data_access#status'
   post 'data/remove' => 'data_access#remove', format: 'json'
+  delete 'data/cancel' => 'data_access#cancel'
 
   post 'metrics' => 'search#log_metrics_event'
 
