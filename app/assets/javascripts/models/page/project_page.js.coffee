@@ -73,7 +73,29 @@ ns.ProjectPage = do (ko,
 
     hasType: =>
       @query.serialize().bounding_box || @query.serialize().polygon || @query.serialize().point
+    
+    showTemporal: =>
+      if @query.serialize().temporal
+        m_names = new Array("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+        label = "" 
+        dates = @query.serialize().temporal.split(",")
+        date1 = dates[0].split("T")[0].split("-")
+        startDate = new Date(date1[0] + "-" + date1[1].replace(/^0+/, '') + "-" + date1[2].replace(/^0+/, ''))
+        date2 = dates[1].split("T")[0].split("-")
+        endDate = new Date(dates[1].split("T")[0].split("-")[0] + "-" + dates[1].split("T")[0].split("-")[1].replace(/^0+/, '') + "-" + dates[1].split("T")[0].split("-")[2].replace(/^0+/, ''))
 
+        if startDate.getFullYear() == endDate.getFullYear()
+          if startDate.getMonth() == endDate.getMonth()
+            label = m_names[startDate.getMonth()] + " " + startDate.getDate() + " - " + endDate.getDate() + ", " + startDate.getFullYear()
+          else
+            label = m_names[startDate.getMonth()] + " " + startDate.getDate() + " - " + m_names[endDate.getMonth()] + " " + endDate.getDate() + ", " + startDate.getFullYear()
+        else
+          label = if startDate.getMonth() then m_names[startDate.getMonth()] + " " + startDate.getDate() + ", " + startDate.getFullYear() else "Beginning of time "
+          label += if endDate.getMonth() then " - " + m_names[endDate.getMonth()] + " " + endDate.getDate() + ", " + endDate.getFullYear() else " - End of Time"
+        label
+      else
+        false
+    
     _loadFromUrl: (e)=>
       @project.serialized(urlUtil.currentParams())
       @workspaceName(urlUtil.getProjectName())
